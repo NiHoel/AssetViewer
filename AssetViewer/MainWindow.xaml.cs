@@ -1,10 +1,14 @@
-﻿using AssetViewer.Controls;
+﻿
+
+using AssetViewer.Controls;
 using AssetViewer.Library;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+
+
 
 namespace AssetViewer {
 
@@ -17,7 +21,15 @@ namespace AssetViewer {
       this.DataContext = this;
       ComboBoxLanguage.SelectedItem = App.Language;
       ComboBoxLanguage.SelectionChanged += ComboBoxLanguage_OnSelectionChanged;
-    }
+
+            using (var recog = new reader.ImageRecognition())
+            {
+                using (var trade = new reader.TradingMenu(recog))
+                {
+                    Console.WriteLine(trade.can_buy());
+                }
+            }
+        }
 
     #endregion Constructors
 
