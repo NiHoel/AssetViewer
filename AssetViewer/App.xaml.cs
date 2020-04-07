@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using AssetViewer.Comparer;
+using AssetViewer.Data;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -14,67 +17,77 @@ namespace AssetViewer {
 
     #region Properties
 
-    public static Dictionary<string, string> Descriptions { get; } = new Dictionary<string, string>();
-
+    public static Dictionary<int, string> Descriptions { get; } = new Dictionary<int, string>();
+    public static bool CountMode { get; set; }
     #endregion Properties
 
     #region Fields
 
-    public static Library.Languages Language = Library.Languages.English;
+    public static Data.Languages Language { get; set; } = Data.Languages.English;
+    public static List<Languages> PossibleLanguages { get; } = new List<Languages>();
 
     #endregion Fields
 
     #region Constructors
 
     public App() {
+      var comp = RarityComparer.Default;
+
+      foreach (var language in Enum.GetValues(typeof(Languages))) {
+        var lang = (Languages)language;
+        var resource = $"AssetViewer.Resources.Assets.Texts_{lang.ToString("G")}.xml";
+        if (Assembly.GetExecutingAssembly().GetManifestResourceNames().Contains(resource)) {
+          PossibleLanguages.Add(lang);
+        }
+      }
       switch (CultureInfo.CurrentCulture.TwoLetterISOLanguageName) {
         case "pt":
-          Language = Library.Languages.Brazilian;
+          Language = Data.Languages.Brazilian;
           break;
 
         case "zh":
-          Language = Library.Languages.Chinese;
+          Language = Data.Languages.Chinese;
           break;
 
         case "en":
-          Language = Library.Languages.English;
+          Language = Data.Languages.English;
           break;
 
         case "fr":
-          Language = Library.Languages.French;
+          Language = Data.Languages.French;
           break;
 
         case "de":
-          Language = Library.Languages.German;
+          Language = Data.Languages.German;
           break;
 
         case "it":
-          Language = Library.Languages.Italian;
+          Language = Data.Languages.Italian;
           break;
 
         case "ja":
-          Language = Library.Languages.Japanese;
+          Language = Data.Languages.Japanese;
           break;
 
         case "ko":
-          Language = Library.Languages.Korean;
+          Language = Data.Languages.Korean;
           break;
 
         case "pl":
-          Language = Library.Languages.Polish;
+          Language = Data.Languages.Polish;
           break;
 
         case "ru":
-          Language = Library.Languages.Russian;
+          Language = Data.Languages.Russian;
           break;
 
         case "es":
-          Language = Library.Languages.Spanish;
+          Language = Data.Languages.Spanish;
           break;
         //case "pt": Language = Library.Languages.Portuguese; break;
         //case "zh	": Language = Library.Languages.Taiwanese; break;
         default:
-          Language = Library.Languages.English;
+          Language = Data.Languages.English;
           break;
       }
 
@@ -85,7 +98,7 @@ namespace AssetViewer {
       Descriptions.Clear();
       var resource = $"AssetViewer.Resources.Assets.Texts_{Language.ToString("G")}.xml";
       if (!Assembly.GetExecutingAssembly().GetManifestResourceNames().Contains(resource)) {
-        Language = Library.Languages.English;
+        Language = Data.Languages.English;
         resource = $"AssetViewer.Resources.Assets.Texts_{Language.ToString("G")}.xml";
       }
 
@@ -93,7 +106,7 @@ namespace AssetViewer {
       using (var reader = new StreamReader(stream)) {
         var document = XDocument.Parse(reader.ReadToEnd()).Root;
         foreach (var item in document.Elements()) {
-          Descriptions.Add(item.Attribute("ID").Value, item.Value);
+          Descriptions.Add(int.Parse(item.Attribute("ID").Value), item.Value);
         }
       }
     }

@@ -1,3 +1,1 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c04e0a62d91c8f40bf286b5fdac96d1f1bd791a33a03115edba1e9dd465adacf
-size 891
+﻿<?xml version="1.0" encoding="utf-8"?><StartExpeditionItem><Asset ID="190159" RV="Release" RT="Common"><N>Polar Item</N><T ID="190159" I="data/ui/2kimages/main/3dicons/icon_ship.png" /><R ID="118002" /><IT /><A ID="NoneAllocation"><T ID="-1230" /></A><ISE><U><T ID="2637" /><A><U><T ID="800076" /></U></A></U></ISE><GU /><TP>250</TP><HF>1000</HF><S /></Asset></StartExpeditionItem>

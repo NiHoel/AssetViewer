@@ -8,22 +8,20 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Xml.Linq;
 
 namespace AssetViewer.Controls {
 
-  /// <summary>
-  /// Interaktionslogik für ExpeditionEvents.xaml
-  /// </summary>
   public partial class ExpeditionEvents : UserControl, INotifyPropertyChanged {
 
-    #region Properties
+    #region Public Properties
 
     public List<ExpeditionEvent> Events { get; } = new List<ExpeditionEvent>();
 
-    #endregion Properties
+    #endregion Public Properties
 
-    #region Constructors
+    #region Public Constructors
 
     public ExpeditionEvents() {
       Loaded += ExpeditionEvents_Loaded;
@@ -41,34 +39,40 @@ namespace AssetViewer.Controls {
       DataContext = this;
     }
 
-    #endregion Constructors
+    #endregion Public Constructors
 
-    #region Events
+    #region Public Events
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    #endregion Events
+    #endregion Public Events
 
-    #region Methods
+    #region Public Methods
 
     public void RaisePropertyChanged([CallerMemberName]string name = "") {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
+    #endregion Public Methods
+
+    #region Private Methods
+
     private void ExpeditionEvents_Unloaded(object sender, RoutedEventArgs e) {
-      if (Application.Current.MainWindow is MainWindow main)
-        main.ComboBoxLanguage.SelectionChanged -= this.ComboBoxLanguage_SelectionChanged;
+      if (Application.Current.MainWindow is MainWindow main) {
+        main.OnLanguage_Changed -= this.ComboBoxLanguage_SelectionChanged;
+      }
     }
 
     private void ExpeditionEvents_Loaded(object sender, RoutedEventArgs e) {
-      ((MainWindow)Application.Current.MainWindow).ComboBoxLanguage.SelectionChanged += this.ComboBoxLanguage_SelectionChanged;
+      ((MainWindow)Application.Current.MainWindow).OnLanguage_Changed += this.ComboBoxLanguage_SelectionChanged;
     }
 
     private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e) {
       DataContext = null;
       DataContext = this;
+      (this.FindResource("EventSource") as CollectionViewSource)?.View.Refresh();
     }
 
-    #endregion Methods
+    #endregion Private Methods
   }
 }

@@ -1,6 +1,5 @@
 ﻿using AssetViewer.Data;
-using AssetViewer.Library;
-using AssetViewer.Templates;
+using AssetViewer.Data;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +9,7 @@ using System.Windows.Data;
 namespace AssetViewer.Converter {
 
   [ValueConversion(typeof(IEnumerable<RewardsItem>), typeof(IEnumerable<TemplateAsset>))]
+  [ValueConversion(typeof(IEnumerable<string>), typeof(IEnumerable<TemplateAsset>))]
   [ValueConversion(typeof(RewardsItem), typeof(IEnumerable<TemplateAsset>))]
   public class RewardToItemConverter : IValueConverter {
 
@@ -22,8 +22,17 @@ namespace AssetViewer.Converter {
       else if (value is IEnumerable<RewardsItem> rewards) {
         return rewards.SelectMany(l => l.ID.GetItemsById().OrderBy(k => k.Text.CurrentLang));
       }
-      else if (value is string pool) {
-        return pool.GetItemsById().OrderBy(k => k.Text.CurrentLang);
+      else if (value is IEnumerable<int> ints) {
+        return ints.SelectMany(l => l.GetItemsById().OrderBy(k => k.Text.CurrentLang));
+      }
+      else if (value is IEnumerable<string> strings) {
+        return strings.Select(s => int.Parse(s)).SelectMany(l => l.GetItemsById().OrderBy(k => k.Text.CurrentLang));
+      }
+      else if (value is int poolint) {
+        return poolint.GetItemsById().OrderBy(k => k.Text.CurrentLang);
+      }
+      else if (value is string poolstring) {
+        return int.Parse(poolstring).GetItemsById().OrderBy(k => k.Text.CurrentLang);
       }
       return null;
     }

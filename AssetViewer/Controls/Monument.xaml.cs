@@ -1,4 +1,4 @@
-﻿using AssetViewer.Templates;
+﻿using AssetViewer.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +15,7 @@ namespace AssetViewer.Controls {
   [SuppressMessage("ReSharper", "PossibleNullReferenceException"), SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
   public partial class Monument : UserControl, INotifyPropertyChanged {
 
-    #region Properties
+    #region Public Properties
 
     public IEnumerable<TemplateAsset> Categories {
       get { return this.AssetCategory.AsEnumerable(); }
@@ -23,33 +23,49 @@ namespace AssetViewer.Controls {
 
     public IEnumerable<TemplateAsset> Events {
       get {
-        if (!(this.ComboBoxCategories.SelectedItem is TemplateAsset monumentCategory))
-          return new TemplateAsset[0];
+        if (!(this.ComboBoxCategories.SelectedItem is TemplateAsset monumentCategory)) {
+          return Array.Empty<TemplateAsset>();
+        }
+
         return this.AssetEvent.Where(w => monumentCategory.MonumentEvents.Contains(w.ID));
       }
     }
 
     public IEnumerable<TemplateAsset> Thresholds {
       get {
-        if (!(this.ComboBoxEvents.SelectedItem is TemplateAsset monumentEvent))
-          return new TemplateAsset[0];
+        if (!(this.ComboBoxEvents.SelectedItem is TemplateAsset monumentEvent)) {
+          return Array.Empty<TemplateAsset>();
+        }
+
         return this.AssetThreshold.Where(w => monumentEvent.MonumentThresholds.Contains(w.ID));
       }
     }
 
     public IEnumerable<TemplateAsset> Rewards {
       get {
-        if (!(this.ComboBoxThresholds.SelectedItem is TemplateAsset monumentThreshold))
-          return new TemplateAsset[0];
+        if (!(this.ComboBoxThresholds.SelectedItem is TemplateAsset monumentThreshold)) {
+          return Array.Empty<TemplateAsset>();
+        }
+
         return monumentThreshold.MonumentRewards.GetItemsById();
       }
     }
 
-    public TemplateAsset SelectedAsset { get; set; }
+    public TemplateAsset SelectedAsset {
+      get {
+        return selectedAsset;
+      }
+      set {
+        if (selectedAsset != value) {
+          selectedAsset = value;
+          this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAsset)));
+        }
+      }
+    }
 
-    #endregion Properties
+    #endregion Public Properties
 
-    #region Constructors
+    #region Public Constructors
 
     public Monument() {
       this.InitializeComponent();
@@ -57,7 +73,6 @@ namespace AssetViewer.Controls {
       this.AssetCategory = new List<TemplateAsset>();
       this.AssetEvent = new List<TemplateAsset>();
       this.AssetThreshold = new List<TemplateAsset>();
-      //this.AssetReward = new List<TemplateAsset>();
       using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("AssetViewer.Resources.Assets.MonumentCategory.xml")) {
         using (var reader = new StreamReader(stream)) {
           var document = XDocument.Parse(reader.ReadToEnd()).Root;
@@ -79,27 +94,28 @@ namespace AssetViewer.Controls {
       this.DataContext = this;
     }
 
-    #endregion Constructors
+    #endregion Public Constructors
 
-    #region Events
+    #region Public Events
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    #endregion Events
+    #endregion Public Events
 
-    #region Fields
+    #region Private Fields
 
     private readonly List<TemplateAsset> AssetCategory;
     private readonly List<TemplateAsset> AssetEvent;
     private readonly List<TemplateAsset> AssetThreshold;
+    private TemplateAsset selectedAsset;
 
-    #endregion Fields
+    #endregion Private Fields
 
-    #region Methods
+    #region Private Methods
 
     //private readonly List<TemplateAsset> AssetReward;
     private void Monument_OnLoaded(Object sender, RoutedEventArgs e) {
-      ((MainWindow)Application.Current.MainWindow).ComboBoxLanguage.SelectionChanged += this.ComboBoxLanguage_SelectionChanged;
+      ((MainWindow)Application.Current.MainWindow).OnLanguage_Changed += this.ComboBoxLanguage_SelectionChanged;
       this.ComboBoxCategories.SelectedIndex = 0;
     }
 
@@ -112,35 +128,36 @@ namespace AssetViewer.Controls {
     }
 
     private void ComboBoxCategories_OnSelectionChanged(Object sender, SelectionChangedEventArgs e) {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Events"));
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Events)));
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HasResult"));
       this.ComboBoxEvents.SelectedIndex = 0;
     }
 
     private void ComboBoxEvents_OnSelectionChanged(Object sender, SelectionChangedEventArgs e) {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Thresholds"));
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Thresholds)));
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HasResult"));
       this.ComboBoxThresholds.SelectedIndex = 0;
     }
 
     private void ComboBoxThresholds_OnSelectionChanged(Object sender, SelectionChangedEventArgs e) {
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Rewards"));
+      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Rewards)));
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HasResult"));
-      this.ListBoxItems.SelectedIndex = 0;
     }
 
     private void ListBoxItems_OnSelectionChanged(Object sender, SelectionChangedEventArgs e) {
-      if (e.AddedItems.Count == 0)
-        this.ListBoxItems.SelectedIndex = 0;
-      this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedAsset"));
+      if (e.AddedItems.Count == 0) {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAsset)));
+      }
+
       this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("RarityBrush"));
     }
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e) {
-      if (Application.Current.MainWindow is MainWindow main)
-        main.ComboBoxLanguage.SelectionChanged -= this.ComboBoxLanguage_SelectionChanged;
+      if (Application.Current.MainWindow is MainWindow main) {
+        main.OnLanguage_Changed -= this.ComboBoxLanguage_SelectionChanged;
+      }
     }
 
-    #endregion Methods
+    #endregion Private Methods
   }
 }
