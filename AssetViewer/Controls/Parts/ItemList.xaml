@@ -24,8 +24,9 @@
           <Grid MaxHeight="24">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="30" />
-              <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />
+			  <ColumnDefinition Width="*" />
+			  <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Image Grid.Column="0" HorizontalAlignment="Left" Source="{Binding Path=Text.Icon.Filename}" />
             <TextBlock
@@ -33,7 +34,12 @@
               VerticalAlignment="Center"
               Text="{Binding Path=Text}"
               TextTrimming="CharacterEllipsis" />
-            <TextBlock
+			<NumberBox 
+				Grid.Column="2"
+				 HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+				Value="{Bind Path=Count}" />
+			<TextBlock
               Grid.Column="2"
               HorizontalAlignment="Right"
               VerticalAlignment="Center"

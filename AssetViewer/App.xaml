@@ -6,11 +6,12 @@
   xmlns:local="clr-namespace:AssetViewer"
   StartupUri="MainWindow.xaml">
   <Application.Resources>
-    <ResourceDictionary>
+	<ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="FilterExpander.xaml" />
         <ResourceDictionary Source="TreeViewItemStyle1.xaml" />
-      </ResourceDictionary.MergedDictionaries>
+		<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+	  </ResourceDictionary.MergedDictionaries>
       <DataTemplate DataType="{x:Type data:Description}">
         <Grid SnapsToDevicePixels="True">
           <TextBlock

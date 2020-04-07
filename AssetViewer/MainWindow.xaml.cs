@@ -22,13 +22,13 @@ namespace AssetViewer {
       ComboBoxLanguage.SelectedItem = App.Language;
       ComboBoxLanguage.SelectionChanged += ComboBoxLanguage_OnSelectionChanged;
 
-            using (var recog = new reader.ImageRecognition())
-            {
-                using (var trade = new reader.TradingMenu(recog))
-                {
-                    Console.WriteLine(trade.can_buy());
-                }
-            }
+            //using (var recog = new reader.ImageRecognition())
+            //{
+            //    using (var trade = new reader.TradingMenu(recog))
+            //    {
+            //        Console.WriteLine(trade.can_buy());
+            //    }
+            //}
         }
 
     #endregion Constructors
