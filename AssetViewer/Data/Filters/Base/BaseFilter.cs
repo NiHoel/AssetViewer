@@ -1,5 +1,4 @@
-﻿using AssetViewer.Templates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -61,7 +60,7 @@ namespace AssetViewer.Data.Filters {
 
     public List<TemplateAsset> SavedItems { get; set; }
 
-    public string Description => App.Descriptions[DescriptionID];
+    public string Description => AssetProvider.Descriptions[DescriptionID];
 
     object IFilter.SelectedValue => SelectedValue;
 
